@@ -1,59 +1,50 @@
 /*
- * Creation and Computation Experiment 1 - Cat Wash
- * Servo, Button, Blue Foam, Furry
- * Sean Harkin, Chris Luginbuhl, Max Lander
- * 
- * Code taken/adapted/played with/broken/returned to from Jeremy Rigor - 
- * https://arduino.stackexchange.com/questions/17536/controlling-servo-motors-with-push-button-problem-though
- */
-#include <Servo.h> //include arduino servo library
+   Code adapted from Jeremy Rigor -
+   https://arduino.stackexchange.com/questions/17536/controlling-servo-motors-with-push-button-problem-though
+*/
+#include <Servo.h>
 
-const int buttonPin = 13; //pin the button it is attached to, unchangeable
-const int servoPin = 9; // pin the servo is attached to, unchangable
+const int buttonPin = 6;        //In a previous version, this was Pin 9, but the docs say: "This analog input is connected to a voltage divider for 
+                                // the lipoly battery so be aware that this pin naturally 'sits' at around 2VDC due to the resistor divider". Switched to pin 6. 
+const int servoPin = 10;
 
-int buttonState = 0; // creates variable and sets initial value
-int directionState = 0; 
-int pos = 0;
+int buttonState = LOW;          //Initialize a variable to track whether the button is pressed
+int pos = 1;                    //Servo position in degrees
 
-Servo servoOne; //declare servo variable 
+Servo servoOne;                   //Create a servo object 
 
-
-void setup() 
+void setup()
 {
-  Serial.begin(9600); // starts serial monitor, for confirming button read
-  servoOne.attach(9); //attach servo to pin
-  servoOne.write(directionState); //sets initial directionState
-  pinMode(buttonPin, INPUT); //sets buttonPin pin to Input 
+  
+  servoOne.attach(10);             //Servos are connected to the same pin for their control signal
+  pinMode(buttonPin, INPUT_PULLUP); //When the switch is open, the buttonPin voltage floats. Adding PULLUP ensures it goes to HIGH
 }
 
-void loop() 
+void loop()
 {
- Serial.println(pos); //confirm button read (while we were having circuit issues)
- buttonState = digitalRead(buttonPin); //reads button input and stores it
-
-  if(directionState == 0) //checks for directionState
-  {
-    if(buttonState == LOW) //when button is pressed do the following
-    {
-      directionState = 1; //sets directionState to 1 (in order to allow reverse direction movement below)
-      for(pos = 0; pos < 60; pos=pos+1) //increments position value by 1 while pos is between 0 and 60
-      {
-        servoOne.write(pos); //updates/moves servo position 
-        delay(2); 
+ // Serial.println(buttonState);            //This is for test & debug purposes. We can use Serial Monitor to see what state the Arduino sees the switch in.
+    buttonState = digitalRead(buttonPin);
+    
+    while(buttonState == HIGH) { 
+      /*Check the buttonState once for each loop. If it's HIGH, take the servomotor from 1 to 60 degrees and back to 1,
+       * and then recheck the buttonState and repeat. 
+       * 
+       * Returning to 1 degree ensures the servo is always "parked" in the same position, and avoids a sudden full-power lurch when the 
+       * arduino is connected to power.
+       * 
+       * We used 1 degree rather than 0 because one of our test servos was straining against
+       * the hard stop when set to zero.
+       */
+    
+      for (pos = 1; pos < 60; pos++) {
+        servoOne.write(pos);
+        delay(2);  //delay 2ms to ensure servo has time to complete the move
       }
-    }
-  }
-
-  else if(directionState ==1) //confirms servo is at end of movement and needs to move back
-  {
-    if(buttonState == LOW) //when button is pressed do the following
-    {
-     directionState = 0; //return to starting state
-     for(pos = 60; pos > 1; pos=pos-1) //incrementally descrease pos value back to 0
-     {
-        servoOne.write(pos); //update servo again
+      
+      for (pos = 60; pos > 2; pos--) {
+        servoOne.write(pos);
         delay(2);
-     }
+      }
+    buttonState = digitalRead(buttonPin);
     }
-  }
 }
