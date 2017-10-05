@@ -46,6 +46,5 @@ void loop()
       delay(2);
     }
     buttonState = digitalRead(buttonPin);
-    Serial.println(buttonState);
   }
 }
