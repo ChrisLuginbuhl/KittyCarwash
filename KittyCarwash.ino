@@ -1,7 +1,24 @@
+    /*******************************************************           
+    * Kitty Catwash --  This code keeps kitties clean      *   
+    *                                                      *
+    * DIGF-6037-001 Creation & Computation                 *                                    *   
+    *                                                      *  
+    * Material MadLibs 1                                   *
+    *                                                      * 
+    * Group: Sean, Max, Chris                              *   
+    *                                                      *   
+    * Purpose:  Demonstration of a simple program.         *   
+    *                                                      *   
+    * Usage:                                               *   
+    *  Connects to the Adafruit Feather M0 ATWINC1500 Wifi *
+    *                                                      *
+    ********************************************************/  
+
 /*
-   Code adapted from Jeremy Rigor -
-   https://arduino.stackexchange.com/questions/17536/controlling-servo-motors-with-push-button-problem-though
+    * An early version of this program made use of code adapted from Jeremy Rigor -
+     *https://arduino.stackexchange.com/questions/17536/controlling-servo-motors-with-push-button-problem-though
 */
+
 #include <Servo.h>
 
 const int buttonPin = 13;          //In a previous version, this was Pin 9, but the docs say: "This analog input is connected to a voltage divider for
